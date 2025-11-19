@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nagn</title>
+
+<!-- Font kiểu chữ -->
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    background: pink;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    overflow-x: hidden;
+}
+
+.container {
+    margin-top: 30px;
+}
+
+.top-img {
+    width: 200px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    transition: opacity 0.8s ease;
+}
+
+button {
+    padding: 12px 24px;
+    font-size: 18px;
+    margin: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#yesBtn { background: #ff4081; color: white; }
+#noBtn { background: white; border: 2px solid #ff4081; color: #ff4081; }
+
+/* CHỮ CHÚC MỪNG */
+#message {
+    font-size: 50px;                 /* chữ to 25% màn hình */
+    font-family: 'Pacifico', cursive;/* kiểu chữ */
+    color: red;
+    font-weight: bold;
+    display: none;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%) translateY(50px);
+    bottom: 20px;
+    opacity: 0;
+    transition: opacity 1s ease, transform 1s ease;
+}
+
+/* TRÁI TIM LỚN */
+#big-heart {
+    font-size: 50vh;
+    line-height: 50vh;
+    display: none;
+    animation: beat 1s infinite;
+    margin-top: 40px;
+}
+
+@keyframes beat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+.explode {
+    animation: explode 0.8s forwards ease-out;
+}
+
+@keyframes explode {
+    from { transform: scale(1); opacity: 1; }
+    to { transform: scale(4); opacity: 0; }
+}
+
+/* ẢNH CHẠY XUYÊN MÀN HÌNH */
+.slide-img {
+    width: 150px;
+    margin: 10px;
+    border-radius: 10px;
+    position: absolute;
+    left: -200px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    animation: slideAcross 3s linear forwards;
+}
+
+@keyframes slideAcross {
+    0% { left: -200px; opacity: 1; }
+    100% { left: 120vw; opacity: 1; }
+}
+
+/* TRÁI TIM RƠI */
+.heart-fall {
+    position: fixed;
+    top: -20px;
+    color: hotpink;
+    animation: fallAnim linear forwards;
+    pointer-events: none;
+}
+
+@keyframes fallAnim {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(100vh); opacity: 0; }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+    <img src="meo.png" id="catImage" class="top-img" />
+
+    <h1 id="question">Bạn có phải là anh yêu của tui không?</h1>
+
+    <div id="buttons">
+        <button id="noBtn">Không</button>
+        <button id="yesBtn">Có</button>
+    </div>
+
+    <h2 id="message">Chúc anh yêu 19/11 vui vẻ ❤️</h2>
+
+    <div id="big-heart">❤️</div>
+    <div id="gallery"></div>
+</div>
+
+<script>
+// Nút Không đổi thành Có
+document.getElementById("noBtn").addEventListener("click", () => {
+    const noBtn = document.getElementById("noBtn");
+    noBtn.innerText = "Có ❤️";
+    noBtn.onclick = startSequence;
+});
+
+document.getElementById("yesBtn").addEventListener("click", startSequence);
+
+// Tạo trái tim rơi
+function createFallingHearts() {
+    for (let i = 0; i < 35; i++) {
+        setTimeout(() => {
+            let heart = document.createElement("div");
+            heart.className = "heart-fall";
+            heart.innerHTML = "❤️";
+
+            heart.style.left = Math.random() * window.innerWidth + "px";
+            heart.style.fontSize = (20 + Math.random() * 40) + "px";
+            heart.style.animationDuration = (2 + Math.random() * 2) + "s";
+
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 3500);
+        }, i * 80);
+    }
+}
+
+// Bắt đầu sequence
+function startSequence() {
+    createFallingHearts();
+
+    document.getElementById("question").style.display = "none";
+    document.getElementById("buttons").style.display = "none";
+
+    const cat = document.getElementById("catImage");
+    cat.style.opacity = 0;
+    setTimeout(() => { cat.style.display = "none"; }, 800);
+
+    // Hiện chữ chúc mừng
+    const msg = document.getElementById("message");
+    setTimeout(() => {
+        msg.style.display = "block";
+        msg.style.opacity = "1";
+        msg.style.transform = "translateX(-50%) translateY(0)";
+    }, 900);
+
+    // Trái tim lớn
+    const bigHeart = document.getElementById("big-heart");
+    setTimeout(() => { bigHeart.style.display = "block"; }, 2500);
+
+    setTimeout(() => { bigHeart.classList.add("explode"); }, 4000);
+    setTimeout(() => { bigHeart.style.display = "none"; }, 4700);
+
+    // Ảnh chạy xuyên màn hình
+    setTimeout(showImages, 5000);
+}
+
+// Hiển thị ảnh chạy từ trái qua phải
+function showImages() {
+    const images = ["anh1.jpg","anh2.jpg","anh3.jpg","anh4.jpg"]; // đổi link ảnh của bạn
+    const gallery = document.getElementById("gallery");
+
+    images.forEach((src, index) => {
+        setTimeout(() => {
+            let img = document.createElement("img");
+            img.src = src;
+            img.className = "slide-img";
+            gallery.appendChild(img);
+        }, index * 1000);
+    });
+}
+</script>
+</body>
+</html>
